@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const brand = require('./brand.json')
+const collection =require('./collection.json');
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
@@ -89,7 +90,9 @@ app.get('/', (req, res) => {
 app.get('/brand', (req, res) => {
   res.send(brand)
 })
-
+app.get('/collection', (req, res) => {
+  res.send(collection)
+})
 app.listen(port, () => {
   console.log(`Brand Shop server is running on port : ${port}`);
 })
