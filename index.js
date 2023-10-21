@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const brand = require('./brand.json')
-const collection =require('./collection.json');
+const collection = require('./collection.json');
 require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
@@ -29,6 +29,7 @@ async function run() {
     await client.connect();
 
     const productCollection = client.db("productDB").collection("product");
+    const cartCollection = client.db("productDB").collection("cart");
 
     app.get('/product', async (req, res) => {
       const cursor = productCollection.find();
@@ -59,7 +60,7 @@ async function run() {
           rating: updateProduct.rating
         }
       }
-      const result = await productCollection.updateOne(filter,product,option)
+      const result = await productCollection.updateOne(filter, product, option)
       res.send(result)
     })
 
@@ -68,6 +69,27 @@ async function run() {
       console.log(newProduct);
       const result = await productCollection.insertOne(newProduct);
       res.send(result)
+    })
+
+
+
+    app.get('/cart', async (req, res) => {
+      const cursor = cartCollection.find();
+      const cart = await cursor.toArray();
+      res.send(cart);
+    })
+    app.post('/cart', async (req, res) => {
+      const cart = req.body;
+      console.log(cart);
+      const result = await cartCollection.insertOne(cart)
+      res.send(result)
+    })
+
+    app.delete('/cart/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await cartCollection.deleteOne(query);
+      res.send(result);
     })
 
 
